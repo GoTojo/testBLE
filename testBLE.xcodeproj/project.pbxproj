@@ -12,6 +12,7 @@
 		F12BD38D1A2C1C7D00C27A14 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F12BD38C1A2C1C7D00C27A14 /* Images.xcassets */; };
 		F12BD3901A2C1C7D00C27A14 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F12BD38E1A2C1C7D00C27A14 /* MainMenu.xib */; };
 		F12BD39C1A2C1C7D00C27A14 /* testBLETests.m in Sources */ = {isa = PBXBuildFile; fileRef = F12BD39B1A2C1C7D00C27A14 /* testBLETests.m */; };
+		F12BD3A61A2C1CA800C27A14 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F12BD3A51A2C1CA800C27A14 /* CoreBluetooth.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +36,7 @@
 		F12BD3951A2C1C7D00C27A14 /* testBLETests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = testBLETests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F12BD39A1A2C1C7D00C27A14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F12BD39B1A2C1C7D00C27A14 /* testBLETests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = testBLETests.m; sourceTree = "<group>"; };
+		F12BD3A51A2C1CA800C27A14 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F12BD3A61A2C1CA800C27A14 /* CoreBluetooth.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,6 +61,7 @@
 		F12BD3791A2C1C7D00C27A14 = {
 			isa = PBXGroup;
 			children = (
+				F12BD3A51A2C1CA800C27A14 /* CoreBluetooth.framework */,
 				F12BD3841A2C1C7D00C27A14 /* testBLE */,
 				F12BD3981A2C1C7D00C27A14 /* testBLETests */,
 				F12BD3831A2C1C7D00C27A14 /* Products */,
