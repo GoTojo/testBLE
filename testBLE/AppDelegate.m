@@ -12,6 +12,7 @@
 
 @property (weak) IBOutlet NSWindow *window;
 @property (strong) CBCentralManager* centralManager;
+@property (strong) CBPeripheral* peripheral;
 
 @end
 
@@ -101,7 +102,15 @@
  */
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI
 {
-    NSLog(@"Did discover peripheral. peripheral: %@ rssi: %@, UUID: %@ advertisementData: %@ ", peripheral, RSSI, peripheral.UUID, advertisementData);
+    //NSLog(@"Did discover peripheral. peripheral: %@ rssi: %@, UUID: %@ advertisementData: %@ ", peripheral, RSSI, peripheral.UUID, advertisementData);
+    NSLog(@"Did discover peripheral. peripheral: %@ rssi: %@, advertisementData: %@ ", peripheral, RSSI, advertisementData);
+    if (peripheral.state == CBPeripheralStateDisconnected) {
+        if ([peripheral.name compare:@"mi.1"] == NSOrderedSame) {
+            NSLog(@"found mi.1");
+            self.peripheral = peripheral;
+            [self.centralManager connectPeripheral:self.peripheral options:nil];
+        }
+    }
 }
 
 /*
