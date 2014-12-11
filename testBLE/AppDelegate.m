@@ -129,6 +129,8 @@
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral
 {
     NSLog(@"Did connect to peripheral: %@", peripheral);
+    [peripheral setDelegate:self];
+    [peripheral discoverServices:nil];
 }
 
 /*
@@ -147,4 +149,135 @@
 {
     NSLog(@"Fail to connect to peripheral: %@ with error = %@", peripheral, [error localizedDescription]);
 }
+
+#pragma mark - CBPeripheralDelegate methods
+/*
+ Invoked upon completion of a -[discoverServices:] request.
+ */
+- (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error
+{
+    if (error)
+    {
+        NSLog(@"Discovered services for %@ with error: %@", peripheral.name, [error localizedDescription]);
+        return;
+    }
+    for (CBService * service in peripheral.services)
+    {
+        NSLog(@"Service found with UUID: %@", service.UUID);
+    }
+}
+
+/*
+ Invoked upon completion of a -[discoverCharacteristics:forService:] request.
+ */
+- (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error
+{
+    if (error)
+    {
+        NSLog(@"Discovered characteristics for %@ with error: %@", service.UUID, [error localizedDescription]);
+        return;
+    }
+    
+    if([service.UUID isEqual:[CBUUID UUIDWithString:@"1809"]])
+    {
+        for (CBCharacteristic * characteristic in service.characteristics)
+        {
+            /* Set indication on temperature measurement */
+            if([characteristic.UUID isEqual:[CBUUID UUIDWithString:@"2A1C"]])
+            {
+                NSLog(@"Found a Temperature Measurement Characteristic");
+            }
+            /* Set notification on intermediate temperature measurement */
+            if([characteristic.UUID isEqual:[CBUUID UUIDWithString:@"2A1E"]])
+            {
+                NSLog(@"Found a Intermediate Temperature Measurement Characteristic");
+            }
+            /* Write value to measurement interval characteristic */
+            if( [characteristic.UUID isEqual:[CBUUID UUIDWithString:@"2A21"]])
+            {
+                //uint16_t val = 2;
+                //NSData * valData = [NSData dataWithBytes:(void*)&val length:sizeof(val)];
+                //[testPeripheral writeValue:valData forCharacteristic:characteristic type:CBCharacteristicWriteWithResponse];
+                NSLog(@"Found a Temperature Measurement Interval Characteristic - Write interval value");
+            }
+        }
+    }
+    
+    if([service.UUID isEqual:[CBUUID UUIDWithString:@"180A"]])
+    {
+        for (CBCharacteristic * characteristic in service.characteristics)
+        {
+            /* Read manufacturer name */
+            if([characteristic.UUID isEqual:[CBUUID UUIDWithString:@"2A29"]])
+            {
+                //[testPeripheral readValueForCharacteristic:characteristic];
+                NSLog(@"Found a Device Manufacturer Name Characteristic - Read manufacturer name");
+            }
+        }
+    }
+    
+    if ( [service.UUID isEqual:[CBUUID UUIDWithString:CBUUIDGenericAccessProfileString]] )
+    {
+        for (CBCharacteristic *characteristic in service.characteristics)
+        {
+            /* Read device name */
+            if([characteristic.UUID isEqual:[CBUUID UUIDWithString:CBUUIDDeviceNameString]])
+            {
+                //[testPeripheral readValueForCharacteristic:characteristic];
+                NSLog(@"Found a Device Name Characteristic - Read device name");
+            }
+        }
+    }
+}
+
+/*
+ Invoked upon completion of a -[readValueForCharacteristic:] request or on the reception of a notification/indication.
+ */
+- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
+{
+    if (error)
+    {
+        NSLog(@"Error updating value for characteristic %@ error: %@", characteristic.UUID, [error localizedDescription]);
+        return;
+    }
+}
+
+/*
+ Invoked upon completion of a -[writeValue:forCharacteristic:] request.
+ */
+- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
+{
+    if (error)
+    {
+        NSLog(@"Error writing value for characteristic %@ error: %@", characteristic.UUID, [error localizedDescription]);
+        return;
+    }
+}
+
+/*
+ Invoked upon completion of a -[setNotifyValue:forCharacteristic:] request.
+ */
+- (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
+{
+    if (error)
+    {
+        NSLog(@"Error updating notification state for characteristic %@ error: %@", characteristic.UUID, [error localizedDescription]);
+        return;
+    }
+    
+    NSLog(@"Updated notification state for characteristic %@ (newState:%@)", characteristic.UUID, [characteristic isNotifying] ? @"Notifying" : @"Not Notifying");
+    
+    if( ([characteristic.UUID isEqual:[CBUUID UUIDWithString:@"2A1C"]]) ||
+       ([characteristic.UUID isEqual:[CBUUID UUIDWithString:@"2A1E"]]) )
+    {
+        /* Set start/stop button depending on characteristic notifcation/indication */
+        if( [characteristic isNotifying] )
+        {
+        }
+        else
+        {
+        }
+    }
+}
+
 @end
