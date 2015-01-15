@@ -8,6 +8,14 @@
 
 #import "AppDelegate.h"
 
+// サービスUUID:Immediate Alert
+NSString *kUUIDServiceImmediateAlert = @"1802";
+// サービスUUID:Battery Service
+NSString *kUUIDServiceBatteryService = @"180F";
+// キャラクタリスティックUUID:Alert Level
+NSString *kUUIDCharacteristicsAlertLevel = @"2A06";
+// キャラクタリスティックUUID:Battery Level
+NSString *kUUIDCharacteristicsBatteryLevel = @"2A19";
 @interface AppDelegate ()
 
 @property (weak) IBOutlet NSWindow *window;
@@ -164,6 +172,22 @@
     for (CBService * service in peripheral.services)
     {
         NSLog(@"Service found with UUID: %@", service.UUID);
+        if ( [service.UUID isEqual:[CBUUID UUIDWithString:CBUUIDGenericAccessProfileString]] )
+        {
+            /* GAP (Generic Access Profile) - discover device name characteristic */
+            [self.peripheral discoverCharacteristics:[NSArray arrayWithObject:[CBUUID UUIDWithString:CBUUIDDeviceNameString]]  forService:service];
+            //[self.peripheral discoverIncludedServices:[NSArray arrayWithObject:[CBUUID UUIDWithString:CBUUIDDeviceNameString]]  forService:service];
+        }
+        if ([service.UUID isEqual:[CBUUID UUIDWithString:kUUIDServiceImmediateAlert]])
+        {
+            // Immediate Alertサービスを発見した場合、Alert Levelキャラクタリスティックの探索を開始
+            [self.peripheral discoverCharacteristics:[NSArray arrayWithObjects:[CBUUID UUIDWithString:kUUIDCharacteristicsAlertLevel], nil] forService:service];
+        }
+        else if ([service.UUID isEqual:[CBUUID UUIDWithString:kUUIDServiceBatteryService]])
+        {
+            // Battery Serviceサービスを発見した場合、Battery Levelキャラクタリスティックの探索を開始
+            [self.peripheral discoverCharacteristics:[NSArray arrayWithObjects:[CBUUID UUIDWithString:kUUIDCharacteristicsBatteryLevel], nil] forService:service];
+        }
     }
 }
 
